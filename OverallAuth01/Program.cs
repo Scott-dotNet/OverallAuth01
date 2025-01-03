@@ -27,6 +27,10 @@ namespace OverallAuth01
 
             // Add SwaggerPlugInUnit to the container.
             builder.Services.InitSwagger();
+
+            // 自定义 Jwt 中间件
+            builder.Services.InitJwt();
+
             //自定义Autofac中间件
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureContainer<ContainerBuilder>(builder =>
@@ -45,6 +49,11 @@ namespace OverallAuth01
                 // use Swagger Plugin Unit
                 app.InitSwagger();
             }
+
+            // 启用认证
+            app.UseAuthentication();
+
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

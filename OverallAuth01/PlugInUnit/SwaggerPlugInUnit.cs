@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Security.Cryptography.Xml;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Utility.Enums;
@@ -36,6 +37,31 @@ namespace OverallAuth01.PlugInUnit
                 var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 optinos.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName), true);
 
+                // 使用 Jwt
+                optinos.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Enter a Bearer Token in textbox blow",
+                    Name = "Authorization", // default name 
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                // 让swagger遵守jwt协议
+                optinos.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new List<String>()
+                    }
+                });
             }); 
         }
         /// <summary>
